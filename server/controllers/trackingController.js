@@ -6,7 +6,12 @@ const Booking = require('../models/Booking');
 // @access  Private/Admin
 const createTracking = async (req, res) => {
   try {
-    const tracking = await Tracking.create(req.body);
+    const data = { ...req.body };
+    // Remove empty strings for optional fields to avoid MongoDB type validation errors
+    if (!data.bookingRef) delete data.bookingRef;
+    if (!data.estimatedDelivery) delete data.estimatedDelivery;
+
+    const tracking = await Tracking.create(data);
 
     // If bookingRef is provided, update the booking with tracking reference
     if (req.body.bookingRef) {

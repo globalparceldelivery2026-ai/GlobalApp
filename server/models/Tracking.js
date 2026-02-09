@@ -73,14 +73,17 @@ const trackingSchema = new mongoose.Schema({
   }
 });
 
-// Generate tracking number automatically
-trackingSchema.pre('save', function(next) {
+// Generate tracking number before validation so 'required' check passes
+trackingSchema.pre('validate', function(next) {
   if (!this.trackingNumber) {
-    // Generate format: GPD + timestamp + random 4 digits
     const timestamp = Date.now().toString().slice(-8);
     const random = Math.floor(1000 + Math.random() * 9000);
     this.trackingNumber = `GPD${timestamp}${random}`;
   }
+  next();
+});
+
+trackingSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
 });
