@@ -8,6 +8,8 @@ const ManageBookings = () => {
   const [filter, setFilter] = useState('');
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [editingPrice, setEditingPrice] = useState(null);
+  const [priceValue, setPriceValue] = useState('');
 
   useEffect(() => {
     fetchBookings();
@@ -33,6 +35,17 @@ const ManageBookings = () => {
       fetchBookings();
     } catch (error) {
       alert('Error updating status: ' + error.message);
+    }
+  };
+
+  const handlePriceSave = async (id) => {
+    try {
+      await updateBooking(id, { estimatedCost: parseFloat(priceValue) || 0 });
+      setEditingPrice(null);
+      setPriceValue('');
+      fetchBookings();
+    } catch (error) {
+      alert('Error updating price: ' + error.message);
     }
   };
 
@@ -120,6 +133,9 @@ const ManageBookings = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Booking Code
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Customer
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -130,6 +146,9 @@ const ManageBookings = () => {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Weight
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Price
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
@@ -143,6 +162,11 @@ const ManageBookings = () => {
                 {bookings.length > 0 ? (
                   bookings.map((booking) => (
                     <tr key={booking._id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <span className="text-sm font-mono font-semibold text-primary-600">
+                          {booking.bookingCode || 'N/A'}
+                        </span>
+                      </td>
                       <td className="px-6 py-4">
                         <div>
                           <p className="font-semibold text-gray-900">{booking.name}</p>
@@ -160,6 +184,41 @@ const ManageBookings = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-sm text-gray-900">{booking.weight} kg</span>
+                      </td>
+                      <td className="px-6 py-4">
+                        {editingPrice === booking._id ? (
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="number"
+                              value={priceValue}
+                              onChange={(e) => setPriceValue(e.target.value)}
+                              className="w-24 px-2 py-1 border rounded text-sm"
+                              min="0"
+                              step="0.01"
+                              autoFocus
+                            />
+                            <button
+                              onClick={() => handlePriceSave(booking._id)}
+                              className="text-green-600 hover:text-green-800 text-sm font-medium"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => { setEditingPrice(null); setPriceValue(''); }}
+                              className="text-gray-400 hover:text-gray-600 text-sm"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <span
+                            onClick={() => { setEditingPrice(booking._id); setPriceValue(booking.estimatedCost || ''); }}
+                            className="text-sm text-gray-900 cursor-pointer hover:text-primary-600"
+                            title="Click to edit price"
+                          >
+                            {booking.estimatedCost ? `₹${booking.estimatedCost}` : 'Set price'}
+                          </span>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <select
@@ -198,7 +257,7 @@ const ManageBookings = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="px-6 py-8 text-center text-gray-600">
+                    <td colSpan="8" className="px-6 py-8 text-center text-gray-600">
                       No bookings found
                     </td>
                   </tr>
@@ -227,6 +286,10 @@ const ManageBookings = () => {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
+                    <p className="text-sm text-gray-600">Booking Code</p>
+                    <p className="font-semibold font-mono text-primary-600">{selectedBooking.bookingCode || 'N/A'}</p>
+                  </div>
+                  <div>
                     <p className="text-sm text-gray-600">Name</p>
                     <p className="font-semibold">{selectedBooking.name}</p>
                   </div>
@@ -253,6 +316,10 @@ const ManageBookings = () => {
                   <div>
                     <p className="text-sm text-gray-600">Weight</p>
                     <p className="font-semibold">{selectedBooking.weight} kg</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Price</p>
+                    <p className="font-semibold">{selectedBooking.estimatedCost ? `₹${selectedBooking.estimatedCost}` : 'Not set'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Status</p>

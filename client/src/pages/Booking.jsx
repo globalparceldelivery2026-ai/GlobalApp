@@ -21,6 +21,7 @@ const Booking = () => {
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [bookingCode, setBookingCode] = useState('');
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
@@ -48,6 +49,7 @@ const Booking = () => {
       const response = await createBooking(formData);
       if (response.success) {
         setSuccess(true);
+        setBookingCode(response.data.bookingCode || '');
         setFormData({
           name: '',
           email: '',
@@ -85,8 +87,13 @@ const Booking = () => {
               <span className="text-3xl mr-4">✅</span>
               <div>
                 <h3 className="text-xl font-bold text-green-800 mb-2">Booking Submitted Successfully!</h3>
+                {bookingCode && (
+                  <p className="text-green-900 font-semibold mb-2">
+                    Your Booking Code: <span className="font-mono bg-green-100 px-2 py-1 rounded">{bookingCode}</span>
+                  </p>
+                )}
                 <p className="text-green-700">
-                  Thank you for your booking request. Our team will contact you shortly with a quote and further details.
+                  Please save your booking code for reference. Our team will contact you shortly with a quote and further details.
                 </p>
               </div>
             </div>

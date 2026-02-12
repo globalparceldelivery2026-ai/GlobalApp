@@ -11,6 +11,7 @@ import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import ManageBookings from './pages/admin/ManageBookings';
 import ManageTracking from './pages/admin/ManageTracking';
+import SupportDesk from './pages/admin/SupportDesk';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -42,6 +43,11 @@ function App() {
           <Route path="/admin/tracking" element={
             <ProtectedRoute>
               <ManageTracking />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/support" element={
+            <ProtectedRoute>
+              <SupportDesk />
             </ProtectedRoute>
           } />
         </Routes>

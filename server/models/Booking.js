@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
+  bookingCode: {
+    type: String,
+    unique: true,
+    uppercase: true,
+    trim: true
+  },
   name: {
     type: String,
     required: [true, 'Name is required'],
@@ -70,6 +76,19 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+});
+
+// Auto-generate bookingCode before validation
+bookingSchema.pre('validate', function(next) {
+  if (!this.bookingCode) {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    this.bookingCode = `BK${code}`;
+  }
+  next();
 });
 
 // Update timestamp on save

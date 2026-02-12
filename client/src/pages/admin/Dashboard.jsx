@@ -146,12 +146,12 @@ const Dashboard = () => {
           </Link>
 
           <Link
-            to="/"
+            to="/admin/support"
             className="bg-white rounded-lg shadow p-6 hover:shadow-xl transition-all text-center"
           >
-            <div className="text-4xl mb-3">🌐</div>
-            <h3 className="text-lg font-bold text-gray-900">View Website</h3>
-            <p className="text-gray-600 text-sm mt-2">Go to public website</p>
+            <div className="text-4xl mb-3">🎧</div>
+            <h3 className="text-lg font-bold text-gray-900">Support Desk</h3>
+            <p className="text-gray-600 text-sm mt-2">View customer queries & inquiries</p>
           </Link>
         </div>
 
@@ -169,6 +169,9 @@ const Dashboard = () => {
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="font-semibold text-gray-900">{booking.name}</p>
+                          {booking.bookingCode && (
+                            <p className="text-xs font-mono text-primary-600">{booking.bookingCode}</p>
+                          )}
                           <p className="text-sm text-gray-600">
                             {booking.origin} → {booking.destination}
                           </p>
